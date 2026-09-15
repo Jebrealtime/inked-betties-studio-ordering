@@ -1,0 +1,24 @@
+{
+  "name": "inked-betties-studio-ordering",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@shopify/app-bridge": "^3.7.11",
+    "@shopify/app-bridge-react": "^4.2.11",
+    "@shopify/polaris": "^13.9.5",
+    "@shopify/shopify-api": "^11.14.1",
+    "cors": "^2.8.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^9.8.1",
+    "node-cron": "^4.5.0",
+    "nodemailer": "^9.0.3",
+    "pdfkit": "^0.19.1",
+    "undici": "^8.10.2"
+  }
+}

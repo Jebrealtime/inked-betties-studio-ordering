@@ -1,0 +1,186 @@
+/* ============================================================
+   INKED BETTIES ADMIN THEME — CLEAN, DARK, PROFESSIONAL
+   ============================================================ */
+
+/* ===== ROOT WRAPPER ===== */
+.ink-app {
+  position: relative;
+  background-color: #0d0d0d !important;
+  min-height: 100vh;
+  color: #ffffff !important;
+  font-family: "Montserrat", "Helvetica Neue", sans-serif;
+  overflow: hidden;
+}
+
+/* ===== FIXED BACKGROUND LOGO ===== */
+.ink-bg-logo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 420px;
+  height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== ENSURE ALL CONTENT SITS ABOVE LOGO ===== */
+.ink-app > *:not(.ink-bg-logo) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   REMOVE ALL POLARIS BACKGROUNDS (THE REAL FIX)
+   ============================================================ */
+
+/* Page background */
+.ink-app .Polaris-Page,
+.ink-app .Polaris-Page__Content,
+.ink-app .Polaris-Page-Header {
+  background-color: transparent !important;
+}
+
+/* Frame background */
+.ink-app .Polaris-Frame,
+.ink-app .Polaris-Frame__Main,
+.ink-app .Polaris-Frame__Content {
+  background-color: transparent !important;
+}
+
+/* Layout background */
+.ink-app .Polaris-Layout {
+  background-color: transparent !important;
+  gap: 22px !important;
+}
+
+/* Box background */
+.ink-app .Polaris-Box {
+  background-color: transparent !important;
+}
+
+/* ============================================================
+   CARDS — SEMI-TRANSPARENT FOR WATERMARK VISIBILITY
+   ============================================================ */
+.ink-card,
+.ink-app .Polaris-Card {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid #2e2e2e !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  padding: 18px !important;
+}
+
+.ink-app .Polaris-Card__Header,
+.ink-app .Polaris-Card__Section {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+/* ============================================================
+   BUTTONS — BLACK, WHITE TEXT, WHITE OUTLINE
+   ============================================================ */
+.ink-app .Polaris-Button,
+.ink-button {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 12px 16px !important;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.ink-app .Polaris-Button:hover,
+.ink-button:hover {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  color: #000000 !important;
+}
+
+/* Danger button */
+.ink-button-danger {
+  background-color: #c40000 !important;
+  color: #ffffff !important;
+  border: 2px solid #c40000 !important;
+}
+
+/* ============================================================
+   QUICK ACTIONS — CLEAN MOBILE GRID
+   ============================================================ */
+.solo-actions,
+.owner-actions,
+.artist-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+@media (min-width: 600px) {
+  .solo-actions,
+  .owner-actions,
+  .artist-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ============================================================
+   FAVORITE PRODUCTS — HORIZONTAL SCROLL
+   ============================================================ */
+.favorite-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 14px;
+  padding-bottom: 8px;
+}
+
+.favorite-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.favorite-scroll::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 6px;
+}
+
+/* ============================================================
+   PRODUCT TILES — MINI DARK CARDS
+   ============================================================ */
+.product-tile {
+  min-width: 160px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid #2e2e2e;
+  border-radius: 12px;
+  padding: 14px;
+  color: #ffffff;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.product-price {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   MOBILE WRAPPER
+   ============================================================ */
+.app-wrapper {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   HIDE SIDEBAR ON MOBILE
+   ============================================================ */
+@media (max-width: 600px) {
+  .ink-app .Polaris-Navigation {
+    display: none !important;
+  }
+}
