@@ -45,9 +45,18 @@ export default function OwnerProducts() {
       try {
         // ⭐ FIXED — now calls your Render backend
         const res = await fetch(`${API_BASE_URL}/api/products`);
-        const data = await res.json();
-
-        setProducts(data);
+2
+const data = await res.json();
+3
+ 
+4
+console.log("Products returned:", data);
+5
+console.log("Count:", data.length);
+6
+ 
+7
+setProducts(data);
 
         const sorted = [...data].sort((a, b) => {
           const aSales = a.sales || 0;
