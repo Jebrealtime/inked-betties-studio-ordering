@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import { Page, Layout, Card, Text, Button } from "@shopify/polaris";
 
 // ⭐ FIXED — correct backend API base URL
-const API = "https://https://inked-betties-studio-ordering.onrender.com.onrender.com";
+import { API_BASE_URL } from "../api";
+
 
 export default function OwnerProducts() {
   const [products, setProducts] = useState([]);
@@ -43,7 +44,7 @@ export default function OwnerProducts() {
     async function loadProducts() {
       try {
         // ⭐ FIXED — now calls your Render backend
-        const res = await fetch(`${API}/api/products`);
+        const res = await fetch(`${API_BASE_URL}/api/products`);
         const data = await res.json();
 
         setProducts(data);

@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-
-// ⭐ FIXED — correct backend API base URL
-const API = "https://https://inked-betties-studio-ordering.onrender.com.onrender.com";
+import { API_BASE_URL } from "../api";   // ⭐ FIXED — correct backend API base URL
 
 export default function Inventory() {
   const [open, setOpen] = useState({});
@@ -17,7 +15,7 @@ export default function Inventory() {
     async function loadProducts() {
       try {
         // ⭐ FIXED — now calls your Render backend
-        const res = await fetch(`${API}/api/products`);
+        const res = await fetch(`${API_BASE_URL}/api/products`);
         const data = await res.json();
 
         if (data.status !== "ok") {

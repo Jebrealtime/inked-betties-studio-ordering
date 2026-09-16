@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Page, Layout, Card, Text, Button, Badge } from "@shopify/polaris";
+import { API_BASE_URL } from "../api";
 
 export default function SoloDashboard({ setActivePage }) {
   const [artist, setArtist] = useState(null);
@@ -11,7 +12,7 @@ export default function SoloDashboard({ setActivePage }) {
   // ⭐ Load all artists from backend
   useEffect(() => {
     async function loadArtists() {
-      const res = await fetch("https://https://inked-betties-studio-ordering.onrender.com.onrender.com/api/artists");
+      const res = await fetch(`${API_BASE_URL}/api/artists`);
       const data = await res.json();
       setArtists(data);
     }
@@ -38,11 +39,11 @@ export default function SoloDashboard({ setActivePage }) {
 
       setFavorites(artist.favorites || []);
 
-      const ordersRes = await fetch(`http://localhost:3000/api/orders/artist/${artist.email}`);
+      const ordersRes = await fetch(`${API_BASE_URL}/api/orders/artist/${artist.email}`);
       const ordersData = await ordersRes.json();
       setOrders(ordersData || []);
 
-      const prevRes = await fetch(`http://localhost:3000/api/previous-orders/${artist.email}`);
+      const prevRes = await fetch(`${API_BASE_URL}/api/previous-orders/${artist.email}`);
       const prevData = await prevRes.json();
       setPreviousOrders(prevData || []);
     }
@@ -63,7 +64,6 @@ export default function SoloDashboard({ setActivePage }) {
 
   return (
     <Page title={`Welcome, ${artist.name}`}>
-      
       <Layout>
 
         {/* ⭐ Quick Actions (clean grid) */}

@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Page, Layout, Card, Text, Button } from "@shopify/polaris";
-
-// ⭐ FIXED — correct backend API base URL
-const API = "https://https://inked-betties-studio-ordering.onrender.com.onrender.com";
+import { API_BASE_URL } from "../api";   // ⭐ FIXED — correct backend API base URL
 
 export default function SoloOrderSupplies() {
   const [products, setProducts] = useState([]);
@@ -11,7 +9,7 @@ export default function SoloOrderSupplies() {
   async function loadProducts() {
     try {
       // ⭐ FIXED — now calls your Render backend
-      const res = await fetch(`${API}/api/products`);
+      const res = await fetch(`${API_BASE_URL}/api/products`);
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -37,7 +35,7 @@ export default function SoloOrderSupplies() {
   async function submitOrder() {
     try {
       // ⭐ FIXED — now posts to your Render backend
-      await fetch(`${API}/api/orders`, {
+      await fetch(`${API_BASE_URL}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

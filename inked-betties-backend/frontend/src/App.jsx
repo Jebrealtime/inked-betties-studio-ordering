@@ -17,6 +17,8 @@ import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/build/esm/styles.css";
 import "./inked-betties-theme.css";
 
+import { API_BASE_URL } from "./api";   // ⭐ FIXED — correct backend API base URL
+
 // SOLO PAGES
 import SoloDashboard from "./solo/SoloDashboard";
 import SoloInventory from "./solo/SoloInventory";
@@ -65,67 +67,65 @@ function App() {
   // ======================================================
 
   const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
-  async function handleLogin() {
-    try {
-      const res = await fetch(
-        "https://https://inked-betties-studio-ordering.onrender.com.onrender.com/api/artists/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      // If backend returns HTML or empty body, this prevents the crash
-      let data;
+    async function handleLogin() {
       try {
-        data = await res.json();
-      } catch {
-        setError("Server returned invalid response");
-        return;
-      }
+        const res = await fetch(
+          `${API_BASE_URL}/api/artists/login`,   // ⭐ FIXED — correct backend login URL
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          }
+        );
 
-      if (data.status !== "ok") {
-        setError(data.message || "Login failed");
-        return;
-      }
+        let data;
+        try {
+          data = await res.json();
+        } catch {
+          setError("Server returned invalid response");
+          return;
+        }
 
-      setUser(data.artist);
-      localStorage.setItem("user", JSON.stringify(data.artist));
-    } catch (err) {
-      setError("Network error — backend unreachable");
+        if (data.status !== "ok") {
+          setError(data.message || "Login failed");
+          return;
+        }
+
+        setUser(data.artist);
+        localStorage.setItem("user", JSON.stringify(data.artist));
+      } catch (err) {
+        setError("Network error — backend unreachable");
+      }
     }
-  }
 
-  return (
-    <Page title="Inked Betties Login">
-      <Layout>
-        <Layout.Section>
-          <Card sectioned>
-            <TextField label="Email" value={email} onChange={setEmail} />
-            <TextField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={setPassword}
-            />
+    return (
+      <Page title="Inked Betties Login">
+        <Layout>
+          <Layout.Section>
+            <Card sectioned>
+              <TextField label="Email" value={email} onChange={setEmail} />
+              <TextField
+                label="Password"
+                type="password"
+                value={password}
+                onChange={setPassword}
+              />
 
-            {error && <Text tone="critical">{error}</Text>}
+              {error && <Text tone="critical">{error}</Text>}
 
-            <Button tone="success" onClick={handleLogin}>
-              Login
-            </Button>
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
-  );
-};
-
+              <Button tone="success" onClick={handleLogin}>
+                Login
+              </Button>
+            </Card>
+          </Layout.Section>
+        </Layout>
+      </Page>
+    );
+  };
 
   // ======================================================
   // =====================   LOGOUT   =====================

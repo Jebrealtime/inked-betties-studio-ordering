@@ -1,7 +1,6 @@
 import { Page, Layout, Card, Text, TextField, Button } from "@shopify/polaris";
 import { useState, useEffect } from "react";
-
-const API = "https://https://inked-betties-studio-ordering.onrender.com.onrender.com";   // ⭐ FIXED — your backend is on port 80
+import { API_BASE_URL } from "../api";   // ⭐ FIXED — correct backend base URL
 
 export default function OwnerInventory() {
   const [newItem, setNewItem] = useState({
@@ -18,7 +17,7 @@ export default function OwnerInventory() {
   useEffect(() => {
     async function loadInventory() {
       try {
-        const res = await fetch(`${API}/api/inventory`);
+        const res = await fetch(`${API_BASE_URL}/api/inventory`);
         const data = await res.json();
         setInventory(data);
       } catch (err) {
@@ -33,7 +32,7 @@ export default function OwnerInventory() {
     if (!newItem.name.trim()) return alert("Item name is required.");
 
     try {
-      const res = await fetch(`${API}/api/inventory`, {
+      const res = await fetch(`${API_BASE_URL}/api/inventory`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newItem),
@@ -57,7 +56,7 @@ export default function OwnerInventory() {
   // ⭐ DELETE ITEM
   async function deleteItem(id) {
     try {
-      await fetch(`${API}/api/inventory/${id}`, { method: "DELETE" });
+      await fetch(`${API_BASE_URL}/api/inventory/${id}`, { method: "DELETE" });
       setInventory(inventory.filter((item) => item._id !== id));
     } catch (err) {
       console.error("Error deleting item:", err);
@@ -70,7 +69,7 @@ export default function OwnerInventory() {
     if (!quantity) return;
 
     try {
-      const res = await fetch(`${API}/api/inventory/reorder/betties`, {
+      const res = await fetch(`${API_BASE_URL}/api/inventory/reorder/betties`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ itemId, quantity: Number(quantity) }),
@@ -94,7 +93,7 @@ export default function OwnerInventory() {
     if (!quantity) return;
 
     try {
-      const res = await fetch(`${API}/api/inventory/reorder/external`, {
+      const res = await fetch(`${API_BASE_URL}/api/inventory/reorder/external`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ itemId, quantity: Number(quantity) }),
