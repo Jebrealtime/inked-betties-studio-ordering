@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 // ⭐ FIXED — correct backend API base URL
-const API = "https://inked-betties-backend-1.onrender.com";
+const API = "https://https://inked-betties-studio-ordering.onrender.com.onrender.com";
 
 export default function Inventory() {
   const [open, setOpen] = useState({});

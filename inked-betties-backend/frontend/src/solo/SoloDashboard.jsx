@@ -11,7 +11,7 @@ export default function SoloDashboard({ setActivePage }) {
   // ⭐ Load all artists from backend
   useEffect(() => {
     async function loadArtists() {
-      const res = await fetch("https://inked-betties-backend-1.onrender.com/api/artists");
+      const res = await fetch("https://https://inked-betties-studio-ordering.onrender.com.onrender.com/api/artists");
       const data = await res.json();
       setArtists(data);
     }

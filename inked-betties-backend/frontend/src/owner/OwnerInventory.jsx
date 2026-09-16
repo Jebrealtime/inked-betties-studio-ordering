@@ -1,7 +1,7 @@
 import { Page, Layout, Card, Text, TextField, Button } from "@shopify/polaris";
 import { useState, useEffect } from "react";
 
-const API = "https://inked-betties-backend-1.onrender.com";   // ⭐ FIXED — your backend is on port 80
+const API = "https://https://inked-betties-studio-ordering.onrender.com.onrender.com";   // ⭐ FIXED — your backend is on port 80
 
 export default function OwnerInventory() {
   const [newItem, setNewItem] = useState({

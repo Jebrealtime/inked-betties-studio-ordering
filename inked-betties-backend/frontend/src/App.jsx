@@ -72,7 +72,7 @@ function App() {
   async function handleLogin() {
     try {
       const res = await fetch(
-        "https://inked-betties-backend-1.onrender.com/api/artists/login",
+        "https://https://inked-betties-studio-ordering.onrender.com.onrender.com/api/artists/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

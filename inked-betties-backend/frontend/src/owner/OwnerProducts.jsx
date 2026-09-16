@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Page, Layout, Card, Text, Button } from "@shopify/polaris";
 
 // ⭐ FIXED — correct backend API base URL
-const API = "https://inked-betties-backend-1.onrender.com";
+const API = "https://https://inked-betties-studio-ordering.onrender.com.onrender.com";
 
 export default function OwnerProducts() {
   const [products, setProducts] = useState([]);
