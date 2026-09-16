@@ -44,8 +44,7 @@ export default function OwnerProducts() {
     async function loadProducts() {
       try {
         // ⭐ FIXED — now calls your Render backend
-        const res = await fetch("https://inked-betties-studio-ordering.onrender.com/api/products"
-);
+        const res = await fetch(`${API_BASE_URL}/api/products`);
 const data = await res.json();
 console.log("API_BASE_URL =", API_BASE_URL);
 console.log("Products returned:", data);
