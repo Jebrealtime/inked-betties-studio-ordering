@@ -22,15 +22,13 @@ export default function SoloDashboard({ setActivePage }) {
 
   // ⭐ Auto-load the test solo artist once artists are fetched
   useEffect(() => {
-    if (artists.length > 0 && !artist) {
-      const testArtist = artists.find(a => a.email === "solo@test.com");
-
-      if (testArtist) {
-        localStorage.setItem("artist", JSON.stringify(testArtist));
-        setArtist(testArtist);
-      }
-    }
-  }, [artists, artist]);
+const loggedInUser = JSON.parse(
+localStorage.getItem("user")
+);
+if (loggedInUser) {
+setArtist(loggedInUser);
+}
+}, []);
 
   // ⭐ Load artist-specific data
   useEffect(() => {
