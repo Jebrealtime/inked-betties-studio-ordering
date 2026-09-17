@@ -97,9 +97,11 @@ function App() {
 
         setUser(data.artist);
         localStorage.setItem("user", JSON.stringify(data.artist));
+        localStorage.setItem("role", data.artist.role);
+setActivePage("dashboard");
       } catch (err) {
         setError("Network error — backend unreachable");
-      }
+      } 
     }
 
     return (
