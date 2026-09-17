@@ -67,7 +67,38 @@ router.post("/invite", async (req, res) => {
 // Create artist account (manual register)
 router.post("/register", async (req, res) => {
   try {
-    const artist = await Artist.create(req.body);
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        status: "error",
+        message: "Name, email, password, and role are required."
+      });
+    }
+
+    const allowedRoles = ["solo", "owner"];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Role must be 'solo' or 'owner'."
+      });
+    }
+
+    const existing = await Artist.findOne({ email });
+    if (existing) {
+      return res.status(409).json({
+        status: "error",
+        message: "An account with that email already exists."
+      });
+    }
+
+    const artist = await Artist.create({
+      name,
+      email,
+      password, // ⚠️ still plaintext — flagged earlier, separate fix
+      role
+    });
+
     res.json({ status: "ok", artist });
   } catch (err) {
     res.status(500).json({ status: "error", message: err.message });

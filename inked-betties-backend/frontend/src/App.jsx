@@ -19,6 +19,9 @@ import "./inked-betties-theme.css";
 
 import { API_BASE_URL } from "./api";   // ⭐ FIXED — correct backend API base URL
 
+// AUTH PAGES
+import Register from "./auth/register"; // ⭐ NEW — wired in register page
+
 // SOLO PAGES
 import SoloDashboard from "./solo/SoloDashboard";
 import SoloInventory from "./solo/SoloInventory";
@@ -127,6 +130,10 @@ console.log("Role from login:", data.artist.role);
               <Button tone="success" onClick={handleLogin}>
                 Login
               </Button>
+
+              <Button onClick={() => setActivePage("register")}>
+                Don't have an account? Register
+              </Button>
             </Card>
           </Layout.Section>
         </Layout>
@@ -209,6 +216,7 @@ console.log("Role from login:", data.artist.role);
 
   const renderPage = () => {
     if (activePage === "login") return <LoginScreen />;
+    if (activePage === "register") return <Register setActivePage={setActivePage} />; // ⭐ NEW
 
     switch (activePage) {
       case "dashboard":

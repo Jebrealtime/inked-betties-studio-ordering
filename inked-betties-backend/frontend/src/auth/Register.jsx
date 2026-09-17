@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Page, Card, TextField, Button, Text } from "@shopify/polaris";
+import { Page, Card, TextField, Button, Text, ChoiceList } from "@shopify/polaris";
+import { API_BASE_URL } from "../api"; // adjust path if api.js lives elsewhere
 
-export default function Register() {
+export default function Register({ setActivePage }) {
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: "artist"
+    role: "solo" // default selection
   });
 
   const [message, setMessage] = useState("");
@@ -16,18 +17,32 @@ export default function Register() {
   }
 
   async function handleRegister() {
-    const res = await fetch("/api/artists/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
-    });
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/artists/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
 
-    const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        setMessage("Server returned an invalid response.");
+        return;
+      }
 
-    if (data.status === "ok") {
-      setMessage("Account created! You can now log in.");
-    } else {
-      setMessage("Error creating account.");
+      if (data.status === "ok") {
+        setMessage("Account created! Taking you to login...");
+        if (setActivePage) {
+          setTimeout(() => setActivePage("login"), 1200);
+        }
+      } else {
+        setMessage(data.message || "Error creating account.");
+      }
+    } catch (err) {
+      setMessage("Network error — backend unreachable.");
+      console.error(err);
     }
   }
 
@@ -53,10 +68,14 @@ export default function Register() {
           onChange={(v) => updateField("password", v)}
         />
 
-        <TextField
-          label="Role (artist, solo, owner)"
-          value={form.role}
-          onChange={(v) => updateField("role", v)}
+        <ChoiceList
+          title="How will you be using Inked Betties?"
+          choices={[
+            { label: "I'm a solo artist ordering for myself", value: "solo" },
+            { label: "I'm a studio owner managing a team", value: "owner" }
+          ]}
+          selected={[form.role]}
+          onChange={(value) => updateField("role", value[0])}
         />
 
         <Button tone="success" onClick={handleRegister}>
