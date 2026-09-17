@@ -99,6 +99,8 @@ function App() {
         localStorage.setItem("user", JSON.stringify(data.artist));
         localStorage.setItem("role", data.artist.role);
 setActivePage("dashboard");
+console.log("Logged in user:", data.artist);
+console.log("Role from login:", data.artist.role);
       } catch (err) {
         setError("Network error — backend unreachable");
       } 
