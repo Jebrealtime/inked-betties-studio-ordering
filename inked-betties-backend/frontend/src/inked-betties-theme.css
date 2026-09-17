@@ -73,17 +73,19 @@
 }
 
 /* ===== PAGE TITLES / HEADINGS ===== */
+/* ⭐ FIXED — page title is a Text span, not an <h1> */
 .ink-app .Polaris-Page-Header {
   border-bottom: 1px solid var(--ink-border);
   text-align: center;
 }
 
-.ink-app .Polaris-Page-Header h1 {
+.ink-app .Polaris-Page-Header .Polaris-Text--headingLg {
   font-family: "Yellowtail", cursive !important;
   font-size: 56px !important;
   font-weight: 400 !important;
   color: var(--ink-accent) !important;
   text-shadow: 0 0 14px var(--ink-accent-glow);
+  display: inline-block;
 }
 
 /* ============================================================
@@ -113,7 +115,7 @@
 }
 
 /* ============================================================
-   BUTTONS — BRANDED WITH ACCENT GLOW
+   BUTTONS — BLACK, WHITE TEXT, WHITE OUTLINE, RED GLOW ON HOVER
    ============================================================ */
 .ink-app .Polaris-Button,
 .ink-button {
@@ -129,6 +131,11 @@
   transition: all 0.2s ease;
 }
 
+/* ⭐ FIXED — force the nested text span to follow the button's color */
+.ink-app .Polaris-Button .Polaris-Text--root {
+  color: inherit !important;
+}
+
 .ink-app .Polaris-Button:hover,
 .ink-button:hover {
   background-color: var(--ink-accent) !important;
@@ -137,15 +144,15 @@
   box-shadow: 0 0 18px var(--ink-accent-glow);
 }
 
-/* Primary / success-tone buttons (Login, Register, Save) get the accent by default */
-.ink-app .Polaris-Button--primary,
-.ink-app .Polaris-Button[class*="tone-success"] {
+/* ⭐ FIXED — real Polaris v12 class names (camelCase, no hyphen) */
+.ink-app .Polaris-Button--toneSuccess,
+.ink-app .Polaris-Button--variantPrimary {
   background-color: var(--ink-accent) !important;
   border-color: var(--ink-accent) !important;
 }
 
-.ink-app .Polaris-Button--primary:hover,
-.ink-app .Polaris-Button[class*="tone-success"]:hover {
+.ink-app .Polaris-Button--toneSuccess:hover,
+.ink-app .Polaris-Button--variantPrimary:hover {
   background-color: #a3000f !important;
   box-shadow: 0 0 22px var(--ink-accent-glow);
 }
