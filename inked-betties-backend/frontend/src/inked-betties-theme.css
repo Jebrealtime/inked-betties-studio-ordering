@@ -73,13 +73,12 @@
 }
 
 /* ===== PAGE TITLES / HEADINGS ===== */
-/* ⭐ FIXED — page title is a Text span, not an <h1> */
-.ink-app .Polaris-Page-Header {
-  border-bottom: 1px solid var(--ink-border);
+/* ⭐ FIXED — real title element is Polaris-Header-Title, not Polaris-Page-Header */
+.ink-app .Polaris-Header-Title__TitleWrapper {
   text-align: center;
 }
 
-.ink-app .Polaris-Page-Header .Polaris-Text--headingLg {
+.ink-app .Polaris-Header-Title .Polaris-Text--headingLg {
   font-family: "Yellowtail", cursive !important;
   font-size: 56px !important;
   font-weight: 400 !important;
@@ -131,7 +130,7 @@
   transition: all 0.2s ease;
 }
 
-/* ⭐ FIXED — force the nested text span to follow the button's color */
+/* Force the nested text span to follow the button's color */
 .ink-app .Polaris-Button .Polaris-Text--root {
   color: inherit !important;
 }
@@ -142,19 +141,6 @@
   border-color: var(--ink-accent) !important;
   color: #ffffff !important;
   box-shadow: 0 0 18px var(--ink-accent-glow);
-}
-
-/* ⭐ FIXED — real Polaris v12 class names (camelCase, no hyphen) */
-.ink-app .Polaris-Button--toneSuccess,
-.ink-app .Polaris-Button--variantPrimary {
-  background-color: var(--ink-accent) !important;
-  border-color: var(--ink-accent) !important;
-}
-
-.ink-app .Polaris-Button--toneSuccess:hover,
-.ink-app .Polaris-Button--variantPrimary:hover {
-  background-color: #a3000f !important;
-  box-shadow: 0 0 22px var(--ink-accent-glow);
 }
 
 /* Danger button */
