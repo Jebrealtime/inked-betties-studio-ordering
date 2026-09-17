@@ -20,7 +20,7 @@ import "./inked-betties-theme.css";
 import { API_BASE_URL } from "./api";   // ⭐ FIXED — correct backend API base URL
 
 // AUTH PAGES
-import Register from "./auth/register"; // ⭐ NEW — wired in register page
+import Register from "./auth/Register"; // ⭐ NEW — wired in register page
 
 // SOLO PAGES
 import SoloDashboard from "./solo/SoloDashboard";
