@@ -54,6 +54,9 @@ function App() {
 
   const devRole = localStorage.getItem("role") || "artist";
   const role = user?.role || devRole;
+  console.log("user =", user);
+console.log("devRole =", devRole);
+console.log("role =", role);
 
   const [activePage, setActivePage] = useState("dashboard");
 
