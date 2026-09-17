@@ -2,10 +2,20 @@
    INKED BETTIES ADMIN THEME — CLEAN, DARK, PROFESSIONAL
    ============================================================ */
 
+@import url('https://fonts.googleapis.com/css2?family=Yellowtail&family=Montserrat:wght@400;600;700&display=swap');
+
+:root {
+  --ink-accent: #c40012;       /* deep crimson */
+  --ink-accent-glow: rgba(196, 0, 18, 0.35);
+  --ink-bg: #0d0d0d;
+  --ink-card-bg: rgba(0, 0, 0, 0.45);
+  --ink-border: #2e2e2e;
+}
+
 /* ===== ROOT WRAPPER ===== */
 .ink-app {
   position: relative;
-  background-color: #0d0d0d !important;
+  background-color: var(--ink-bg) !important;
   min-height: 100vh;
   color: #ffffff !important;
   font-family: "Montserrat", "Helvetica Neue", sans-serif;
@@ -23,6 +33,12 @@
   opacity: 0.18;
   pointer-events: none;
   z-index: 0;
+  animation: ink-logo-breathe 8s ease-in-out infinite;
+}
+
+@keyframes ink-logo-breathe {
+  0%, 100% { opacity: 0.14; }
+  50% { opacity: 0.22; }
 }
 
 /* ===== ENSURE ALL CONTENT SITS ABOVE LOGO ===== */
@@ -35,29 +51,39 @@
    REMOVE ALL POLARIS BACKGROUNDS (THE REAL FIX)
    ============================================================ */
 
-/* Page background */
 .ink-app .Polaris-Page,
 .ink-app .Polaris-Page__Content,
 .ink-app .Polaris-Page-Header {
   background-color: transparent !important;
 }
 
-/* Frame background */
 .ink-app .Polaris-Frame,
 .ink-app .Polaris-Frame__Main,
 .ink-app .Polaris-Frame__Content {
   background-color: transparent !important;
 }
 
-/* Layout background */
 .ink-app .Polaris-Layout {
   background-color: transparent !important;
   gap: 22px !important;
 }
 
-/* Box background */
 .ink-app .Polaris-Box {
   background-color: transparent !important;
+}
+
+/* ===== PAGE TITLES / HEADINGS ===== */
+.ink-app .Polaris-Page-Header {
+  border-bottom: 1px solid var(--ink-border);
+  text-align: center;
+}
+
+.ink-app .Polaris-Page-Header h1 {
+  font-family: "Yellowtail", cursive !important;
+  font-size: 56px !important;
+  font-weight: 400 !important;
+  color: var(--ink-accent) !important;
+  text-shadow: 0 0 14px var(--ink-accent-glow);
 }
 
 /* ============================================================
@@ -65,12 +91,19 @@
    ============================================================ */
 .ink-card,
 .ink-app .Polaris-Card {
-  background-color: rgba(0, 0, 0, 0.45) !important;
+  background-color: var(--ink-card-bg) !important;
   backdrop-filter: blur(4px);
-  border: 1px solid #2e2e2e !important;
+  border: 1px solid var(--ink-border) !important;
+  border-left: 3px solid var(--ink-accent) !important;
   border-radius: 12px !important;
   color: #ffffff !important;
   padding: 18px !important;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.ink-card:hover,
+.ink-app .Polaris-Card:hover {
+  border-color: var(--ink-accent) !important;
 }
 
 .ink-app .Polaris-Card__Header,
@@ -80,7 +113,7 @@
 }
 
 /* ============================================================
-   BUTTONS — BLACK, WHITE TEXT, WHITE OUTLINE
+   BUTTONS — BRANDED WITH ACCENT GLOW
    ============================================================ */
 .ink-app .Polaris-Button,
 .ink-button {
@@ -91,13 +124,30 @@
   font-weight: 600 !important;
   padding: 12px 16px !important;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
   width: 100%;
+  transition: all 0.2s ease;
 }
 
 .ink-app .Polaris-Button:hover,
 .ink-button:hover {
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  color: #000000 !important;
+  background-color: var(--ink-accent) !important;
+  border-color: var(--ink-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 18px var(--ink-accent-glow);
+}
+
+/* Primary / success-tone buttons (Login, Register, Save) get the accent by default */
+.ink-app .Polaris-Button--primary,
+.ink-app .Polaris-Button[class*="tone-success"] {
+  background-color: var(--ink-accent) !important;
+  border-color: var(--ink-accent) !important;
+}
+
+.ink-app .Polaris-Button--primary:hover,
+.ink-app .Polaris-Button[class*="tone-success"]:hover {
+  background-color: #a3000f !important;
+  box-shadow: 0 0 22px var(--ink-accent-glow);
 }
 
 /* Danger button */
@@ -105,6 +155,32 @@
   background-color: #c40000 !important;
   color: #ffffff !important;
   border: 2px solid #c40000 !important;
+}
+
+/* ============================================================
+   LOGIN / REGISTER CENTERING
+   ============================================================ */
+.ink-auth-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.ink-auth-wrapper .Polaris-Card {
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================================
+   NAVIGATION — ACTIVE STATE ACCENT
+   ============================================================ */
+.ink-app .Polaris-Navigation__Item--selected,
+.ink-app .Polaris-Navigation__Item:hover {
+  background-color: rgba(196, 0, 18, 0.12) !important;
+  border-left: 3px solid var(--ink-accent) !important;
 }
 
 /* ============================================================
@@ -142,7 +218,7 @@
 }
 
 .favorite-scroll::-webkit-scrollbar-thumb {
-  background: #444;
+  background: var(--ink-accent);
   border-radius: 6px;
 }
 
@@ -151,11 +227,16 @@
    ============================================================ */
 .product-tile {
   min-width: 160px;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid #2e2e2e;
+  background: var(--ink-card-bg);
+  border: 1px solid var(--ink-border);
   border-radius: 12px;
   padding: 14px;
   color: #ffffff;
+  transition: border-color 0.2s ease;
+}
+
+.product-tile:hover {
+  border-color: var(--ink-accent);
 }
 
 .product-title {
@@ -166,6 +247,7 @@
 .product-price {
   font-size: 14px;
   margin-top: 4px;
+  color: var(--ink-accent);
 }
 
 /* ============================================================
