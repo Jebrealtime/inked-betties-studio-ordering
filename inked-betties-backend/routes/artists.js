@@ -50,7 +50,7 @@ router.post("/invite", async (req, res) => {
 
     const artist = await Artist.create({
       name,
-      email,
+      email: (email || "").trim().toLowerCase(), // ⭐ same normalization as register/login
       password: "temp123", // temporary password
       role: "artist",
       spendingLimit: 0,
@@ -84,7 +84,11 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const existing = await Artist.findOne({ email });
+    // ⭐ Normalize casing so "Morgan@X.com" and "morgan@x.com" are the same
+    // account — logins shouldn't ever fail over capitalization.
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existing = await Artist.findOne({ email: normalizedEmail });
     if (existing) {
       return res.status(409).json({
         status: "error",
@@ -94,7 +98,7 @@ router.post("/register", async (req, res) => {
 
     const artist = await Artist.create({
       name,
-      email,
+      email: normalizedEmail,
       password, // ⚠️ still plaintext — flagged earlier, separate fix
       role
     });
@@ -119,7 +123,10 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  const artist = await Artist.findOne({ email });
+  // ⭐ Same normalization as registration — login is now case-insensitive.
+  const normalizedEmail = (email || "").trim().toLowerCase();
+
+  const artist = await Artist.findOne({ email: normalizedEmail });
   if (!artist) return res.status(404).json({ status: "error", message: "User not found" });
 
   if (artist.password !== password)

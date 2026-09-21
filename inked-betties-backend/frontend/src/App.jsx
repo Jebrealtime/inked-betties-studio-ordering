@@ -170,8 +170,8 @@ console.log("Role from login:", data.artist.role);
     setActivePage("dashboard");
   }
 
-  // =====================================================
-  // ====================   ROLE SWITCHER   ================
+  // ======================================================
+  // ===================   ROLE SWITCHER   ================
   // ======================================================
 
   const RoleSwitcher = () => (
@@ -409,6 +409,17 @@ console.log("Role from login:", data.artist.role);
             </Navigation>
           }
         >
+          {/* ⭐ NEW — universal back button. Every page except the dashboard
+              itself gets a "Back to Dashboard" link at the top, so there's
+              always a way back without relying on the sidebar nav. */}
+          {activePage !== "dashboard" && (
+            <div style={{ padding: "10px 16px 0 16px" }}>
+              <Button onClick={() => setActivePage("dashboard")}>
+                ← Back to Dashboard
+              </Button>
+            </div>
+          )}
+
           {renderPage()}
         </Frame>
 
