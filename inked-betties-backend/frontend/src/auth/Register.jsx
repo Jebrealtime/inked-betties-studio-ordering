@@ -71,8 +71,18 @@ export default function Register({ setActivePage }) {
         <ChoiceList
           title="How will you be using Inked Betties?"
           choices={[
-            { label: "I'm a solo artist ordering for myself", value: "solo" },
-            { label: "I'm a studio owner managing a team", value: "owner" }
+            {
+              label: "Solo",
+              helpText:
+                "Just me — I order my own supplies. (This includes solo studio owners with no staff.)",
+              value: "solo",
+            },
+            {
+              label: "Studio Owner",
+              helpText:
+                "I manage other artists, and they'll be placing orders through my account too.",
+              value: "owner",
+            },
           ]}
           selected={[form.role]}
           onChange={(value) => updateField("role", value[0])}
