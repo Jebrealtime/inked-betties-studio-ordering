@@ -127,9 +127,11 @@ console.log("Role from login:", data.artist.role);
                 onChange={setPassword}
                 autoComplete="current-password"
               />
-              <Button variant="plain" size="slim" onClick={() => setShowPassword((s) => !s)}>
-                {showPassword ? "Hide password" : "Show password"}
-              </Button>
+              <div className="ink-password-toggle">
+                <Button variant="plain" size="slim" onClick={() => setShowPassword((s) => !s)}>
+                  {showPassword ? "Hide password" : "Show password"}
+                </Button>
+              </div>
 
               {error && <Text tone="critical">{error}</Text>}
 
@@ -158,7 +160,7 @@ console.log("Role from login:", data.artist.role);
   }
 
   // ======================================================
-  // ===================   ROLE SWITCHER   ================
+  // =====================   ROLE SWITCHER   ================
   // ======================================================
 
   const RoleSwitcher = () => (

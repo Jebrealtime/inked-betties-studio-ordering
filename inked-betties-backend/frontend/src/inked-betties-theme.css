@@ -143,6 +143,29 @@
   box-shadow: 0 0 18px var(--ink-accent-glow);
 }
 
+/* Small inline "Show/Hide password" toggle — overrides the big black-bar
+   button style above so it reads as a subtle link, not another full-width
+   action button. */
+.ink-app .ink-password-toggle .Polaris-Button {
+  width: auto !important;
+  display: inline-block !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 2px 0 !important;
+  margin-bottom: 8px;
+  text-transform: none !important;
+  font-weight: 400 !important;
+  font-size: 13px !important;
+  color: #cccccc !important;
+  text-decoration: underline;
+}
+
+.ink-app .ink-password-toggle .Polaris-Button:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
 /* Danger button */
 .ink-button-danger {
   background-color: #c40000 !important;

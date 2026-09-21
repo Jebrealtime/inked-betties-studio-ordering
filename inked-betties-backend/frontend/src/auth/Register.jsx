@@ -78,9 +78,11 @@ export default function Register({ setActivePage }) {
           value={form.password}
           onChange={(v) => updateField("password", v)}
         />
-        <Button variant="plain" size="slim" onClick={() => setShowPassword((s) => !s)}>
-          {showPassword ? "Hide password" : "Show password"}
-        </Button>
+        <div className="ink-password-toggle">
+          <Button variant="plain" size="slim" onClick={() => setShowPassword((s) => !s)}>
+            {showPassword ? "Hide password" : "Show password"}
+          </Button>
+        </div>
 
         <ChoiceList
           title="How will you be using Inked Betties?"
