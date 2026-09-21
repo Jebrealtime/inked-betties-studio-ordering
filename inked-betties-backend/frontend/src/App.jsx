@@ -159,8 +159,19 @@ console.log("Role from login:", data.artist.role);
     setActivePage("dashboard");
   }
 
-  // ======================================================
-  // =====================   ROLE SWITCHER   ================
+  // ⭐ NEW — log a freshly-registered artist straight in, instead of sending
+  // them back to a blank login screen to re-type the same email/password
+  // they just typed. That re-entry step was where mistyped emails kept
+  // slipping through unnoticed.
+  function handleRegistered(artist) {
+    setUser(artist);
+    localStorage.setItem("user", JSON.stringify(artist));
+    localStorage.setItem("role", artist.role);
+    setActivePage("dashboard");
+  }
+
+  // =====================================================
+  // ====================   ROLE SWITCHER   ================
   // ======================================================
 
   const RoleSwitcher = () => (
@@ -224,7 +235,7 @@ console.log("Role from login:", data.artist.role);
 
   const renderPage = () => {
     if (activePage === "login") return <LoginScreen />;
-    if (activePage === "register") return <Register setActivePage={setActivePage} />; // ⭐ NEW
+    if (activePage === "register") return <Register setActivePage={setActivePage} onRegistered={handleRegistered} />; // ⭐ NEW
 
     switch (activePage) {
       case "dashboard":
@@ -367,7 +378,7 @@ console.log("Role from login:", data.artist.role);
           />
 
           {activePage === "register" ? (
-            <Register setActivePage={setActivePage} />
+            <Register setActivePage={setActivePage} onRegistered={handleRegistered} />
           ) : (
             <LoginScreen />
           )}

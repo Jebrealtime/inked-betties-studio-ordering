@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Page, Card, TextField, Button, Text, ChoiceList } from "@shopify/polaris";
 import { API_BASE_URL } from "../api"; // adjust path if api.js lives elsewhere
 
-export default function Register({ setActivePage }) {
+export default function Register({ setActivePage, onRegistered }) {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -42,8 +42,13 @@ export default function Register({ setActivePage }) {
       }
 
       if (data.status === "ok") {
-        setMessage("Account created! Taking you to login...");
-        if (setActivePage) {
+        // ⭐ Log them straight in instead of bouncing back to a blank login
+        // screen — no re-typing the email/password they just entered.
+        if (onRegistered) {
+          setMessage("Account created!");
+          onRegistered(data.artist);
+        } else if (setActivePage) {
+          setMessage("Account created! Taking you to login...");
           setTimeout(() => setActivePage("login"), 1200);
         }
       } else {
