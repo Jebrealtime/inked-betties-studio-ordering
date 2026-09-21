@@ -62,7 +62,7 @@ function App() {
 console.log("devRole =", devRole);
 console.log("role =", role);
 
-  const [activePage, setActivePage] = useState("dashboard");
+  const [activePage, setActivePage] = useState("login");
 
   useEffect(() => {
     const saved = localStorage.getItem("user");
@@ -347,6 +347,30 @@ console.log("Role from login:", data.artist.role);
   // =====================   MAIN FRAME   =================
   // ======================================================
 
+  // ⭐ NEW — require login before showing any dashboard/nav. Nobody sees
+  // studio data (or the Owner/Solo/Artist mode switcher) without signing in.
+  if (!user) {
+    return (
+      <AppProvider>
+        <div className="ink-app">
+          <img
+            className="ink-bg-logo"
+            src="https://cdn.shopify.com/s/files/1/0684/4982/8931/files/inked-betties-logo.png?v=1789004957"
+            alt="Inked Betties Logo"
+          />
+
+          {activePage === "register" ? (
+            <Register setActivePage={setActivePage} />
+          ) : (
+            <LoginScreen />
+          )}
+
+          <InstallBanner />
+        </div>
+      </AppProvider>
+    );
+  }
+
   return (
     <AppProvider>
       <div className="ink-app">
@@ -357,7 +381,8 @@ console.log("Role from login:", data.artist.role);
           alt="Inked Betties Logo"
         />
 
-        <RoleSwitcher />
+        {/* ⭐ Dev-only role switcher — never shown in the production build */}
+        {import.meta.env.DEV && <RoleSwitcher />}
 
         <Frame
           navigation={
