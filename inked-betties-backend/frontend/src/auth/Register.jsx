@@ -11,12 +11,20 @@ export default function Register({ setActivePage }) {
   });
 
   const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   function updateField(field, value) {
     setForm({ ...form, [field]: value });
   }
 
   async function handleRegister() {
+    // ⭐ Guard against double-taps / slow-server double-clicks creating
+    // duplicate accounts, and give visible feedback so it never again
+    // looks like the button "did nothing" during a slow (cold-start) response.
+    if (submitting) return;
+    setSubmitting(true);
+    setMessage("");
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/artists/register`, {
         method: "POST",
@@ -43,6 +51,8 @@ export default function Register({ setActivePage }) {
     } catch (err) {
       setMessage("Network error — backend unreachable.");
       console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -88,8 +98,8 @@ export default function Register({ setActivePage }) {
           onChange={(value) => updateField("role", value[0])}
         />
 
-        <Button tone="success" onClick={handleRegister}>
-          Register
+        <Button tone="success" onClick={handleRegister} loading={submitting} disabled={submitting}>
+          {submitting ? "Creating account..." : "Register"}
         </Button>
 
         {message && <Text>{message}</Text>}

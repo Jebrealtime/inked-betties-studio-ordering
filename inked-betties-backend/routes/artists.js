@@ -6,7 +6,7 @@ const router = express.Router();
 // Artist Schema
 const ArtistSchema = new mongoose.Schema({
   name: String,
-  email: String,
+  email: { type: String, unique: true }, // ⭐ prevents duplicate accounts at the DB level
   password: String, // hashed later
   role: { type: String, default: "artist" },
   spendingLimit: { type: Number, default: 0 },
@@ -101,6 +101,16 @@ router.post("/register", async (req, res) => {
 
     res.json({ status: "ok", artist });
   } catch (err) {
+    // ⭐ Two rapid clicks/submissions can both pass the findOne check above
+    // before either finishes creating the account — this is MongoDB's own
+    // duplicate-key error catching that race, so it still shows a clean
+    // message instead of a raw server error.
+    if (err.code === 11000) {
+      return res.status(409).json({
+        status: "error",
+        message: "An account with that email already exists."
+      });
+    }
     res.status(500).json({ status: "error", message: err.message });
   }
 });
