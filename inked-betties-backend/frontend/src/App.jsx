@@ -76,6 +76,7 @@ console.log("role =", role);
   const LoginScreen = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
 
     async function handleLogin() {
@@ -118,13 +119,17 @@ console.log("Role from login:", data.artist.role);
         <Layout>
           <Layout.Section>
             <Card sectioned>
-              <TextField label="Email" value={email} onChange={setEmail} />
+              <TextField label="Email" value={email} onChange={setEmail} autoComplete="email" />
               <TextField
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={setPassword}
+                autoComplete="current-password"
               />
+              <Button variant="plain" size="slim" onClick={() => setShowPassword((s) => !s)}>
+                {showPassword ? "Hide password" : "Show password"}
+              </Button>
 
               {error && <Text tone="critical">{error}</Text>}
 

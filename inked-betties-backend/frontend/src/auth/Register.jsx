@@ -12,6 +12,7 @@ export default function Register({ setActivePage }) {
 
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   function updateField(field, value) {
     setForm({ ...form, [field]: value });
@@ -73,10 +74,13 @@ export default function Register({ setActivePage }) {
 
         <TextField
           label="Password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           value={form.password}
           onChange={(v) => updateField("password", v)}
         />
+        <Button variant="plain" size="slim" onClick={() => setShowPassword((s) => !s)}>
+          {showPassword ? "Hide password" : "Show password"}
+        </Button>
 
         <ChoiceList
           title="How will you be using Inked Betties?"
