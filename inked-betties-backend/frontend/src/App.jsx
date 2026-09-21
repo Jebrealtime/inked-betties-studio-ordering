@@ -18,6 +18,7 @@ import "@shopify/polaris/build/esm/styles.css";
 import "./inked-betties-theme.css";
 
 import { API_BASE_URL } from "./api";   // ⭐ FIXED — correct backend API base URL
+import InstallBanner from "./components/InstallBanner"; // ⭐ NEW — in-app PWA install prompt
 
 // AUTH PAGES
 import Register from "./auth/Register"; // ⭐ NEW — wired in register page
@@ -367,6 +368,8 @@ console.log("Role from login:", data.artist.role);
         >
           {renderPage()}
         </Frame>
+
+        <InstallBanner />
       </div>
     </AppProvider>
   );
