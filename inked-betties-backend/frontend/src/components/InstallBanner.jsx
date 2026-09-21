@@ -29,6 +29,30 @@ export default function InstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [visible, setVisible] = useState(false);
   const [showIosHelp, setShowIosHelp] = useState(false);
+  const [bottomOffset, setBottomOffset] = useState(0);
+
+  // Some mobile browsers (especially older Chrome/WebView versions) size
+  // position:fixed against the full page height, not the actually-visible
+  // area above the address bar — so a bottom:0 banner can end up just
+  // below the fold until the toolbar collapses. Tracking the real visual
+  // viewport keeps the banner pinned to what's actually on screen.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    function reposition() {
+      const offset = window.innerHeight - vv.height - vv.offsetTop;
+      setBottomOffset(Math.max(0, Math.round(offset)));
+    }
+
+    reposition();
+    vv.addEventListener("resize", reposition);
+    vv.addEventListener("scroll", reposition);
+    return () => {
+      vv.removeEventListener("resize", reposition);
+      vv.removeEventListener("scroll", reposition);
+    };
+  }, []);
 
   useEffect(() => {
     // Already installed — never show.
@@ -95,7 +119,10 @@ export default function InstallBanner() {
   if (!visible) return null;
 
   return (
-    <div className="ink-install-banner">
+    <div
+      className="ink-install-banner"
+      style={bottomOffset ? { bottom: `${bottomOffset}px` } : undefined}
+    >
       {!showIosHelp ? (
         <>
           <span className="ink-install-banner-text">
