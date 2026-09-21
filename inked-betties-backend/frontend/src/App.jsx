@@ -62,11 +62,43 @@ function App() {
 console.log("devRole =", devRole);
 console.log("role =", role);
 
-  const [activePage, setActivePage] = useState("login");
+  // ⭐ FIXED — if a user is already saved (from a previous session), start
+  // on the dashboard instead of the login page. Previously this always
+  // started at "login" even when localStorage had a logged-in user, so
+  // closing and reopening the app (or the phone's back button exiting it)
+  // showed the login screen again even though the user was never actually
+  // logged out — it just looked that way.
+  const [activePage, setActivePageRaw] = useState(() =>
+    localStorage.getItem("user") ? "dashboard" : "login"
+  );
+
+  // ⭐ NEW — every navigation (setActivePage("xyz"), anywhere in the app,
+  // including inside child pages that receive it as a prop) now also
+  // pushes a real browser history entry. That means the phone's hardware
+  // or swipe "back" button moves to the previous page inside the app
+  // instead of exiting/closing it — which was what looked like "back
+  // signs you out": it wasn't signing anyone out, it was closing the app
+  // entirely and losing your place.
+  function setActivePage(page) {
+    window.history.pushState({ page }, "", "");
+    setActivePageRaw(page);
+  }
 
   useEffect(() => {
     const saved = localStorage.getItem("user");
     if (saved) setUser(JSON.parse(saved));
+
+    // Seed the initial history entry, then listen for back/forward so
+    // they navigate within the app instead of leaving it.
+    window.history.replaceState({ page: activePage }, "", "");
+    function onPopState(event) {
+      if (event.state && event.state.page) {
+        setActivePageRaw(event.state.page);
+      }
+    }
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ======================================================
