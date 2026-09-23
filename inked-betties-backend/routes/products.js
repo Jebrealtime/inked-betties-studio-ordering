@@ -6,7 +6,7 @@ const router = express.Router();
 // GET  — Shopify products
 router.get("/", async (req, res) => {
   try {
-    const response = await shopifyRequest("GET", "/products.json");
+    const response = await shopifyRequest("GET", "/products.json?status=active");
 
     // Return FULL Shopify product objects
     res.json(response.products);
