@@ -18,6 +18,9 @@ import previousOrdersRouter from "./routes/previousOrders.js";
 // ⭐ INVENTORY ROUTE
 import inventoryRouter from "./routes/inventory.js";
 
+// ⭐ SHOPIFY → MONGO CUSTOMER SYNC (storefront Log In / register webhooks)
+import shopifyWebhooksRouter from "./routes/shopifyWebhooks.js";
+
 dotenv.config();
 
 const app = express();
@@ -25,8 +28,17 @@ const app = express();
 // Debug env
 console.log("ENV TEST:", process.env.SHOPIFY_CLIENT_ID);
 
-// Parse JSON bodies
-app.use(express.json());
+// Parse JSON bodies. The `verify` callback stashes the raw request bytes
+// on req.rawBody — Shopify webhook signatures (routes/shopifyWebhooks.js)
+// have to be checked against the exact raw body, not a re-stringified
+// version of the parsed JSON, or every signature check fails.
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    }
+  })
+);
 
 // Enable CORS BEFORE routes
 app.use(
@@ -112,6 +124,9 @@ app.use("/api/previous-orders", previousOrdersRouter); // Combined orders histor
 
 // ⭐ INVENTORY ROUTE (added cleanly)
 app.use("/api/inventory", inventoryRouter);
+
+// ⭐ SHOPIFY WEBHOOKS (storefront customer → Mongo sync)
+app.use("/api/webhooks/shopify", shopifyWebhooksRouter);
 
 // Root route
 app.get("/", (req, res) => {
