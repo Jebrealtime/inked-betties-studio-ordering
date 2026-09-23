@@ -86,7 +86,7 @@ router.post("/customers", async (req, res) => {
         lastWebhookTopic: topic,
         syncedAt: new Date()
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
 
     // Shopify just needs a 2xx quickly, or it'll retry (and eventually
