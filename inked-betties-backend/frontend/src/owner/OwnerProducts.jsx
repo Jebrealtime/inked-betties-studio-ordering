@@ -3,7 +3,7 @@
 // ======================================================
 
 import { useEffect, useState } from "react";
-import { Page, Layout, Card, Text, Button } from "@shopify/polaris";
+import { Page, Layout, Card, Text, Button, TextField } from "@shopify/polaris";
 
 // ⭐ FIXED — correct backend API base URL
 import { API_BASE_URL } from "../api";
@@ -19,6 +19,9 @@ export default function OwnerProducts() {
   );
 
   const [quantities, setQuantities] = useState({});
+
+  // ⭐ Product search — filters everything below by title as the user types
+  const [searchQuery, setSearchQuery] = useState("");
 
   function changeQty(id, delta) {
     setQuantities((prev) => {
@@ -72,6 +75,15 @@ setProducts(data);
     if (!categories[cat]) categories[cat] = [];
     categories[cat].push(p);
   });
+
+  // ⭐ When there's a search query, flatten everything down to one
+  // "Search Results" list of matching products instead of the normal
+  // Top Selling / Favorites / Category layout.
+  const trimmedQuery = searchQuery.trim().toLowerCase();
+  const isSearching = trimmedQuery.length > 0;
+  const searchResults = isSearching
+    ? products.filter((p) => (p.title || "").toLowerCase().includes(trimmedQuery))
+    : [];
 
   function ProductCard({ product }) {
     const price = product.variants?.[0]?.price || "N/A";
@@ -235,9 +247,36 @@ setProducts(data);
     <Page title="Shop New">
       <Layout>
         <Layout.Section>
+          <div style={{ marginBottom: "1rem" }}>
+            <TextField
+              label="Search products"
+              labelHidden
+              placeholder="🔍 Search products by name..."
+              value={searchQuery}
+              onChange={(value) => setSearchQuery(value)}
+              clearButton
+              onClearButtonClick={() => setSearchQuery("")}
+              autoComplete="off"
+            />
+          </div>
+
           {loading && <Text>Loading products...</Text>}
 
-          {!loading && topSelling.length > 0 && (
+          {!loading && isSearching && (
+            <Card title={`Search Results (${searchResults.length})`} sectioned>
+              {searchResults.length > 0 ? (
+                <div style={gridStyle}>
+                  {searchResults.map((p) => (
+                    <ProductCard key={p.id} product={p} />
+                  ))}
+                </div>
+              ) : (
+                <Text as="p">No products match "{searchQuery}".</Text>
+              )}
+            </Card>
+          )}
+
+          {!loading && !isSearching && topSelling.length > 0 && (
             <Card title="🔥 Top Selling Products" sectioned>
               <div style={gridStyle}>
                 {topSelling.map((p) => (
@@ -247,7 +286,7 @@ setProducts(data);
             </Card>
           )}
 
-          {!loading && favorites.length > 0 && (
+          {!loading && !isSearching && favorites.length > 0 && (
             <Card>
               <div style={{ padding: "1rem", position: "relative" }}>
                 <Text variant="headingLg" as="h2">
@@ -306,6 +345,7 @@ setProducts(data);
           )}
 
           {!loading &&
+            !isSearching &&
             Object.keys(categories).map((cat) => (
               <Card key={cat} title={cat} sectioned>
                 <div style={gridStyle}>
@@ -316,7 +356,7 @@ setProducts(data);
               </Card>
             ))}
 
-          {!loading && products.length === 0 && (
+          {!loading && !isSearching && products.length === 0 && (
             <Text>No products found.</Text>
           )}
         </Layout.Section>
