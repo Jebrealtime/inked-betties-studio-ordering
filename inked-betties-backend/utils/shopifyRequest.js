@@ -13,7 +13,13 @@ async function ensureToken() {
   }
 }
 
-export async function shopifyRequest(method, endpoint, body = null) {
+// options.includeLinkHeader: true — return { json, linkHeader } instead
+// of just the parsed body. Needed for paginating /products.json past 250
+// items (Shopify's page cap), where the next page's cursor only comes
+// back in the response's Link header, never in the JSON body itself.
+// Every existing caller that doesn't pass this option is unaffected —
+// it still gets the parsed JSON body back directly, exactly as before.
+export async function shopifyRequest(method, endpoint, body = null, options = {}) {
   await ensureToken();
 
   // FIX: Ensure endpoint always starts with a slash
@@ -37,13 +43,20 @@ export async function shopifyRequest(method, endpoint, body = null) {
 
   const text = await response.body.text();
 
+  let json;
   try {
-    const json = JSON.parse(text);
-
-    // FIX: Shopify returns { products: [...] }
-    return json;
+    json = JSON.parse(text);
   } catch (err) {
     console.error("Failed to parse Shopify response:", text);
     throw err;
   }
+
+  if (options.includeLinkHeader) {
+    // undici lower-cases header names; Shopify sends "Link".
+    const linkHeader = response.headers["link"] || response.headers["Link"] || null;
+    return { json, linkHeader };
+  }
+
+  // FIX: Shopify returns { products: [...] }
+  return json;
 }

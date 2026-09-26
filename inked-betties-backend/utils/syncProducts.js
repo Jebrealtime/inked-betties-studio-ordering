@@ -1,40 +1,77 @@
-import Product from "../models/Product.js";
+import ShopifyProductCache from "../models/ShopifyProductCache.js";
 import { shopifyRequest } from "./shopifyRequest.js";
 
-export async function syncProducts() {
+// Pulls every ACTIVE product from Shopify and mirrors it into
+// ShopifyProductCache. Runs once on server startup (see server.js) so the
+// cache is correct even after a restart or a missed webhook, and can also
+// be called any time as a manual "resync" safety valve.
+//
+// Only status=active products are kept — same rule as the old live
+// route (routes/products.js) — so drafts/archived items already staged
+// in Shopify admin never leak into the app's ordering screens before
+// you intend them to.
+export async function syncAllProducts() {
   try {
-    const response = await shopifyRequest("/products.json");
+    let nextPageInfo = null;
+    let totalSynced = 0;
+    const seenShopifyIds = [];
 
-    if (!response || !response.products) {
-      console.error("Shopify returned no products");
-      return;
+    do {
+      // Once you're on page 2+, Shopify requires the request to be JUST
+      // page_info + limit (no status filter) — it's already baked into
+      // the cursor from the first request.
+      const endpoint = nextPageInfo
+        ? `/products.json?limit=250&page_info=${nextPageInfo}`
+        : `/products.json?limit=250&status=active`;
+
+      const { json, linkHeader } = await shopifyRequest("GET", endpoint, null, {
+        includeLinkHeader: true
+      });
+
+      const products = json?.products || [];
+      for (const product of products) {
+        const shopifyId = String(product.id);
+        seenShopifyIds.push(shopifyId);
+        await ShopifyProductCache.findOneAndUpdate(
+          { shopifyId },
+          { shopifyId, data: product, syncedAt: new Date() },
+          { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
+        );
+      }
+      totalSynced += products.length;
+
+      nextPageInfo = extractNextPageInfo(linkHeader);
+    } while (nextPageInfo);
+
+    // Anything in the cache that Shopify didn't return this pass is no
+    // longer active (deleted, archived, or switched to draft) — drop it
+    // so the app never shows a stale product that can't actually be
+    // ordered anymore.
+    if (seenShopifyIds.length > 0) {
+      await ShopifyProductCache.deleteMany({ shopifyId: { $nin: seenShopifyIds } });
     }
 
-    const normalized = response.products.map(p => {
-      const variant = p.variants?.[0] || {};
-
-      return {
-        shopifyId: String(p.id),
-        title: p.title || "Untitled Product",
-        price: Number(variant.price || 0),
-
-        // SAFE: image will always be a string or null
-        image: p.images?.[0]?.src || null,
-
-        inStock: (variant.inventory_quantity || 0) > 0,
-        stockCount: Number(variant.inventory_quantity || 0),
-
-        availableForOrdering: p.tags?.includes("app-visible") || false,
-        bestSeller: p.tags?.includes("best-seller") || false,
-        commonlyBoughtWith: []
-      };
-    });
-
-    await Product.deleteMany({});
-    await Product.insertMany(normalized);
-
-    console.log("Products synced from Shopify.");
+    console.log(`Shopify product cache synced: ${totalSynced} active product(s).`);
+    return totalSynced;
   } catch (err) {
-    console.error("Error syncing products:", err.message);
+    console.error("Error syncing products from Shopify:", err.message);
+    return 0;
+  }
+}
+
+function extractNextPageInfo(linkHeader) {
+  if (!linkHeader) return null;
+  const match = linkHeader
+    .split(",")
+    .map((part) => part.trim())
+    .find((part) => part.endsWith('rel="next"'));
+  if (!match) return null;
+  const urlMatch = match.match(/<([^>]+)>/);
+  if (!urlMatch) return null;
+  try {
+    const url = new URL(urlMatch[1]);
+    return url.searchParams.get("page_info");
+  } catch {
+    return null;
   }
 }

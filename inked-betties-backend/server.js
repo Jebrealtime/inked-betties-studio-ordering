@@ -21,6 +21,10 @@ import inventoryRouter from "./routes/inventory.js";
 // ⭐ SHOPIFY → MONGO CUSTOMER SYNC (storefront Log In / register webhooks)
 import shopifyWebhooksRouter from "./routes/shopifyWebhooks.js";
 
+// ⭐ SHOPIFY → MONGO PRODUCT CACHE (Shop New page speed fix)
+import shopifyProductWebhooksRouter from "./routes/shopifyProductWebhooks.js";
+import { syncAllProducts } from "./utils/syncProducts.js";
+
 dotenv.config();
 
 const app = express();
@@ -62,6 +66,11 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
+    // Full product-cache refresh on every boot, so the "Shop New" page
+    // has correct data immediately even if a webhook delivery was ever
+    // missed while the server was down. Runs in the background — it
+    // does not block the server from accepting requests.
+    syncAllProducts();
   })
   .catch((err) => console.error("MongoDB error:", err));
 
@@ -127,6 +136,9 @@ app.use("/api/inventory", inventoryRouter);
 
 // ⭐ SHOPIFY WEBHOOKS (storefront customer → Mongo sync)
 app.use("/api/webhooks/shopify", shopifyWebhooksRouter);
+
+// ⭐ SHOPIFY WEBHOOKS (product create/update/delete → Mongo cache sync)
+app.use("/api/webhooks/shopify", shopifyProductWebhooksRouter);
 
 // Root route
 app.get("/", (req, res) => {

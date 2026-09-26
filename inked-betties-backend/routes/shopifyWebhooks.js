@@ -1,6 +1,6 @@
 import express from "express";
-import crypto from "crypto";
 import ShopifyCustomer from "../models/ShopifyCustomer.js";
+import { verifyShopifyWebhook } from "../utils/verifyShopifyWebhook.js";
 
 const router = express.Router();
 
@@ -21,32 +21,11 @@ const router = express.Router();
 // "Signing secret" on that same page — copy it into this app's
 // environment variables (on Render) as SHOPIFY_WEBHOOK_SECRET.
 // Without that secret set, every request is rejected (fails safe).
+//
+// verifyShopifyWebhook lives in utils/verifyShopifyWebhook.js — the same
+// one secret and check covers every webhook topic this app registers
+// (see routes/shopifyProductWebhooks.js for the product/inventory side).
 // ---------------------------------------------------------------------
-
-function verifyShopifyWebhook(req) {
-  const secret = process.env.SHOPIFY_WEBHOOK_SECRET;
-  const hmacHeader = req.get("X-Shopify-Hmac-Sha256");
-
-  if (!secret || !hmacHeader || !req.rawBody) {
-    return false;
-  }
-
-  const digest = crypto
-    .createHmac("sha256", secret)
-    .update(req.rawBody)
-    .digest("base64");
-
-  // timingSafeEqual needs equal-length buffers, or it throws instead of
-  // just returning false — guard that first.
-  const digestBuffer = Buffer.from(digest, "utf8");
-  const headerBuffer = Buffer.from(hmacHeader, "utf8");
-
-  if (digestBuffer.length !== headerBuffer.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(digestBuffer, headerBuffer);
-}
 
 // Shopify sends both customers/create and customers/update to whatever
 // URL you register for that topic — the payload shape is the same either
