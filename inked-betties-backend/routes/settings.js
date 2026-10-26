@@ -8,7 +8,8 @@ const SettingsSchema = new mongoose.Schema({
   companySpendingLimit: { type: Number, default: 0 },
   studioName: { type: String, default: "Inked Betties" },
   restrictedItems: { type: [String], default: [] },   // ⭐ NEW
-  checklist: { type: [String], default: [] }          // ⭐ NEW
+  checklist: { type: [String], default: [] },         // ⭐ NEW
+  notifyOnChecklistCompletion: { type: Boolean, default: false }
 });
 
 const Settings = mongoose.model("Settings", SettingsSchema);
