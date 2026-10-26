@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { Page, Layout, Card, Text, Button, TextField } from "@shopify/polaris";
+import { API_BASE_URL, currentUser } from "../api";
 
 export default function ArtistSettings() {
   const [artists, setArtists] = useState([]);
 
   async function loadArtists() {
-    const res = await fetch("/api/artists");
+    const ownerId = currentUser()?._id;
+    if (!ownerId) return setArtists([]);
+    const res = await fetch(`${API_BASE_URL}/api/artists?ownerId=${ownerId}`);
     const data = await res.json();
-    setArtists(data);
+    setArtists(Array.isArray(data) ? data : []);
   }
 
   useEffect(() => {
@@ -15,7 +18,7 @@ export default function ArtistSettings() {
   }, []);
 
   async function updateLimit(id, spendingLimit) {
-    await fetch(`/api/artists/${id}/limit`, {
+    await fetch(`${API_BASE_URL}/api/artists/${id}/limit`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ spendingLimit })
@@ -25,7 +28,7 @@ export default function ArtistSettings() {
   }
 
   async function updateRestricted(id, restrictedItems) {
-    await fetch(`/api/artists/${id}/restricted`, {
+    await fetch(`${API_BASE_URL}/api/artists/${id}/restricted`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ restrictedItems })

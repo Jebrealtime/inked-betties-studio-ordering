@@ -1,17 +1,31 @@
 import { useState } from "react";
 import { Page, Layout, Card, Text, Button } from "@shopify/polaris";
-import { QRCodeSVG } from "qrcode.react";   // ⭐ FIXED IMPORT
+import { QRCodeSVG } from "qrcode.react";
+import { currentUser } from "../api";
 
 export default function InviteArtist() {
   const [inviteLink, setInviteLink] = useState("");
+  const [message, setMessage] = useState("");
 
-  const generateLink = () => {
-    // ⭐ Replace this with your real backend-generated link later
-    const link = "https://inkedbetties.com/artist?studio=abc123";
+  const generateLink = async () => {
+    const owner = currentUser();
+    if (!owner?._id) {
+      setMessage("Log in as the studio owner to create an invite link.");
+      return;
+    }
 
+    // ⭐ Each studio gets its own link: it carries this owner's id, so anyone who
+    // signs up through it joins THIS studio as an artist.
+    const link = `${window.location.origin}/?invite=${owner._id}`;
     setInviteLink(link);
-    navigator.clipboard.writeText(link);
-    alert("Invite link copied to clipboard!");
+
+    // In-page message instead of alert(): browser popups freeze the app on some devices.
+    try {
+      await navigator.clipboard.writeText(link);
+      setMessage("Link copied. Text it to your artist, or have them scan the QR code.");
+    } catch {
+      setMessage("Text this link to your artist, or have them scan the QR code.");
+    }
   };
 
   return (
@@ -30,6 +44,12 @@ export default function InviteArtist() {
               </Button>
             </div>
 
+            {message && (
+              <div style={{ marginTop: "0.75rem" }}>
+                <Text as="p">{message}</Text>
+              </div>
+            )}
+
             {/* ⭐ Show the link + QR code once generated */}
             {inviteLink && (
               <div style={{ marginTop: "2rem", textAlign: "center" }}>
@@ -37,11 +57,19 @@ export default function InviteArtist() {
                   Scan or share this QR code:
                 </Text>
 
-                <div style={{ marginTop: "1rem" }}>
-                  <QRCodeSVG value={inviteLink} size={180} />   {/* ⭐ FIXED COMPONENT */}
+                <div
+                  style={{
+                    marginTop: "1rem",
+                    display: "inline-block",
+                    padding: "12px",
+                    background: "#fff",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <QRCodeSVG value={inviteLink} size={180} />
                 </div>
 
-                <Text as="p" style={{ marginTop: "1rem" }}>
+                <Text as="p" style={{ marginTop: "1rem", wordBreak: "break-all" }}>
                   {inviteLink}
                 </Text>
               </div>

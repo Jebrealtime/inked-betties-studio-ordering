@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Page, Layout, Card, Text } from "@shopify/polaris";
+import { API_BASE_URL } from "../api";
 
 export default function PreviousOrders() {
   const [orders, setOrders] = useState([]);
 
   async function loadOrders() {
-    const res = await fetch("/api/previous-orders");
+    const res = await fetch(`${API_BASE_URL}/api/previous-orders`);
     const data = await res.json();
     setOrders(data);
   }

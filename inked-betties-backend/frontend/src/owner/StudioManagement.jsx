@@ -7,6 +7,7 @@ import {
   TextField,
   Button,
 } from "@shopify/polaris";
+import { API_BASE_URL, currentUser } from "../api";
 
 export default function StudioManagement() {
   const [settings, setSettings] = useState({
@@ -22,12 +23,17 @@ export default function StudioManagement() {
   const [newArtistName, setNewArtistName] = useState("");
   const [newArtistEmail, setNewArtistEmail] = useState("");
 
+  // ⭐ In-page status messages (browser alert() popups freeze the app on some devices)
+  const [saveMessage, setSaveMessage] = useState("");
+  const [inviteMessage, setInviteMessage] = useState("");
+  const ownerId = currentUser()?._id;
+
   // ============================
   // LOAD SETTINGS
   // ============================
   async function loadSettings() {
     try {
-      const res = await fetch("/api/settings");
+      const res = await fetch(`${API_BASE_URL}/api/settings`);
       const data = await res.json();
 
       setSettings({
@@ -41,6 +47,8 @@ export default function StudioManagement() {
         checklist: Array.isArray(data.checklist)
           ? data.checklist.join(", ")
           : "",
+
+        notifyOnChecklistCompletion: !!data.notifyOnChecklistCompletion,
       });
     } catch (err) {
       console.error("Settings load error:", err);
@@ -49,7 +57,8 @@ export default function StudioManagement() {
 
   async function loadArtists() {
     try {
-      const res = await fetch("/api/artists");
+      if (!ownerId) return setArtists([]);
+      const res = await fetch(`${API_BASE_URL}/api/artists?ownerId=${ownerId}`);
       const data = await res.json();
       setArtists(Array.isArray(data) ? data : []);
     } catch {
@@ -59,7 +68,7 @@ export default function StudioManagement() {
 
   async function loadNotifications() {
     try {
-      const res = await fetch("/api/notifications");
+      const res = await fetch(`${API_BASE_URL}/api/notifications`);
       const data = await res.json();
       setNotifications(Array.isArray(data) ? data : []);
     } catch {
@@ -78,7 +87,7 @@ export default function StudioManagement() {
 // ============================
 async function saveAllSettings() {
   try {
-    const res = await fetch("/api/settings", {
+    const res = await fetch(`${API_BASE_URL}/api/settings`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -100,12 +109,14 @@ async function saveAllSettings() {
       }),
     });
 
+    if (!res.ok) throw new Error(`Server responded ${res.status}`);
     await res.json();
-    alert("Settings saved!");
+    setSaveMessage("Saved ✓");
+    setTimeout(() => setSaveMessage(""), 3000);
     loadSettings();
   } catch (err) {
     console.error("Save error:", err);
-    alert("Error saving settings");
+    setSaveMessage("Couldn't save. Check your connection and try again.");
   }
 }
 
@@ -114,24 +125,25 @@ async function saveAllSettings() {
   // INVITE ARTIST
   // ============================
   async function inviteArtist() {
-    const res = await fetch("/api/artists/invite", {
+    const res = await fetch(`${API_BASE_URL}/api/artists/invite`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: newArtistName,
         email: newArtistEmail,
+        ownerId,
       }),
     });
 
     const data = await res.json();
 
     if (data.status === "ok") {
-      alert("Artist invited!");
+      setInviteMessage(`${newArtistName} added to your studio ✓`);
       setNewArtistName("");
       setNewArtistEmail("");
       loadArtists();
     } else {
-      alert("Error inviting artist");
+      setInviteMessage(data.message || "Couldn't add that artist.");
     }
   }
 
@@ -140,7 +152,7 @@ async function saveAllSettings() {
   // ============================
   async function updateArtistLimit(id, newLimit) {
     try {
-      await fetch(`/api/artists/${id}`, {
+      await fetch(`${API_BASE_URL}/api/artists/${id}/limit`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -151,7 +163,6 @@ async function saveAllSettings() {
       loadArtists();
     } catch (err) {
       console.error("Artist update error:", err);
-      alert("Error updating artist limit");
     }
   }
 
@@ -159,7 +170,7 @@ async function saveAllSettings() {
   // REMOVE ARTIST
   // ============================
   async function removeArtist(id) {
-    await fetch(`/api/artists/${id}`, {
+    await fetch(`${API_BASE_URL}/api/artists/${id}`, {
       method: "DELETE",
     });
 
@@ -326,6 +337,8 @@ async function saveAllSettings() {
             <Button tone="success" onClick={inviteArtist}>
               Invite Artist
             </Button>
+
+            {inviteMessage && <Text as="p">{inviteMessage}</Text>}
           </Card>
 
           {/* CURRENT ARTISTS */}
@@ -367,6 +380,8 @@ async function saveAllSettings() {
             <Button tone="success" onClick={saveAllSettings}>
               Save All Settings
             </Button>
+
+            {saveMessage && <Text as="p">{saveMessage}</Text>}
           </Card>
 
         </Layout.Section>

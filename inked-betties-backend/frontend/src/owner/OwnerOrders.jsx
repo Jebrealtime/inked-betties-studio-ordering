@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Page, Layout, Card, Text, Button } from "@shopify/polaris";
+import { API_BASE_URL } from "../api";
 
 export default function OwnerOrders() {
   const [orders, setOrders] = useState([]);
 
   async function loadOrders() {
     try {
-      const res = await fetch("/api/orders");
+      const res = await fetch(`${API_BASE_URL}/api/orders`);
       const data = await res.json();
       setOrders(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -20,12 +21,12 @@ export default function OwnerOrders() {
   }, []);
 
   async function approve(id) {
-    await fetch(`/api/orders/${id}/approve`, { method: "PUT" });
+    await fetch(`${API_BASE_URL}/api/orders/${id}/approve`, { method: "PUT" });
     loadOrders();
   }
 
   async function reject(id) {
-    await fetch(`/api/orders/${id}/reject`, { method: "PUT" });
+    await fetch(`${API_BASE_URL}/api/orders/${id}/reject`, { method: "PUT" });
     loadOrders();
   }
 
