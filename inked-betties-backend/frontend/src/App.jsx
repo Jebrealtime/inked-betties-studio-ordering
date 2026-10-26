@@ -68,8 +68,14 @@ console.log("role =", role);
   // closing and reopening the app (or the phone's back button exiting it)
   // showed the login screen again even though the user was never actually
   // logged out — it just looked that way.
+  // ⭐ Studio invite links look like  /?invite=<owner's id>  (from the owner's
+  // Invite Artist QR code). A logged-out visitor with one lands on Register.
+  const [inviteOwnerId] = useState(() =>
+    new URLSearchParams(window.location.search).get("invite")
+  );
+
   const [activePage, setActivePageRaw] = useState(() =>
-    localStorage.getItem("user") ? "dashboard" : "login"
+    localStorage.getItem("user") ? "dashboard" : inviteOwnerId ? "register" : "login"
   );
 
   // ⭐ NEW — every navigation (setActivePage("xyz"), anywhere in the app,
@@ -196,6 +202,8 @@ console.log("Role from login:", data.artist.role);
   // they just typed. That re-entry step was where mistyped emails kept
   // slipping through unnoticed.
   function handleRegistered(artist) {
+    // Drop ?invite=... from the address bar once they've joined.
+    if (window.location.search) window.history.replaceState({}, "", window.location.pathname);
     setUser(artist);
     localStorage.setItem("user", JSON.stringify(artist));
     localStorage.setItem("role", artist.role);
@@ -267,7 +275,7 @@ console.log("Role from login:", data.artist.role);
 
   const renderPage = () => {
     if (activePage === "login") return <LoginScreen />;
-    if (activePage === "register") return <Register setActivePage={setActivePage} onRegistered={handleRegistered} />; // ⭐ NEW
+    if (activePage === "register") return <Register setActivePage={setActivePage} onRegistered={handleRegistered} inviteOwnerId={inviteOwnerId} />; // ⭐ NEW
 
     switch (activePage) {
       case "dashboard":
@@ -410,7 +418,7 @@ console.log("Role from login:", data.artist.role);
           />
 
           {activePage === "register" ? (
-            <Register setActivePage={setActivePage} onRegistered={handleRegistered} />
+            <Register setActivePage={setActivePage} onRegistered={handleRegistered} inviteOwnerId={inviteOwnerId} />
           ) : (
             <LoginScreen />
           )}
