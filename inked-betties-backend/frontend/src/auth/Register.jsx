@@ -1,8 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Page, Card, TextField, Button, Text, ChoiceList } from "@shopify/polaris";
 import { API_BASE_URL } from "../api"; // adjust path if api.js lives elsewhere
 
-export default function Register({ setActivePage, onRegistered }) {
+export default function Register({ setActivePage, onRegistered, inviteOwnerId }) {
+  // ⭐ Joining a studio from an owner's invite link / QR code
+  const [studio, setStudio] = useState(null); // { ownerId, ownerName } once verified
+  const [inviteError, setInviteError] = useState("");
+
+  useEffect(() => {
+    if (!inviteOwnerId) return;
+    fetch(`${API_BASE_URL}/api/artists/invite/${encodeURIComponent(inviteOwnerId)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.status === "ok") setStudio(data);
+        else setInviteError("This invite link isn't valid. Ask your studio owner for a new one, or register below as Solo or Owner.");
+      })
+      .catch(() => setInviteError("Couldn't check the invite link. Check your connection and refresh."));
+  }, [inviteOwnerId]);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -30,7 +45,9 @@ export default function Register({ setActivePage, onRegistered }) {
       const res = await fetch(`${API_BASE_URL}/api/artists/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
+        body: JSON.stringify(
+          studio ? { ...form, role: "artist", ownerId: studio.ownerId } : form
+        )
       });
 
       let data;
@@ -63,8 +80,15 @@ export default function Register({ setActivePage, onRegistered }) {
   }
 
   return (
-    <Page title="Create Inked Betties Account">
+    <Page title={studio ? `Join ${studio.ownerName}'s Studio` : "Create Inked Betties Account"}>
       <Card sectioned>
+        {studio && (
+          <Text as="p">
+            You've been invited to order supplies through {studio.ownerName}'s studio on Inked Betties.
+          </Text>
+        )}
+        {inviteError && <Text as="p" tone="critical">{inviteError}</Text>}
+
         <TextField
           label="Name"
           value={form.name}
@@ -89,7 +113,7 @@ export default function Register({ setActivePage, onRegistered }) {
           </Button>
         </div>
 
-        <ChoiceList
+        {!studio && <ChoiceList
           title="How will you be using Inked Betties?"
           choices={[
             {
@@ -107,7 +131,7 @@ export default function Register({ setActivePage, onRegistered }) {
           ]}
           selected={[form.role]}
           onChange={(value) => updateField("role", value[0])}
-        />
+        />}
 
         <Button tone="success" onClick={handleRegister} loading={submitting} disabled={submitting}>
           {submitting ? "Creating account..." : "Register"}

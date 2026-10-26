@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Page, Card, TextField, Button, Text } from "@shopify/polaris";
+import { API_BASE_URL } from "../api";
 
 export default function Login({ setUser }) {
   const [email, setEmail] = useState("");
@@ -7,7 +8,7 @@ export default function Login({ setUser }) {
   const [error, setError] = useState("");
 
   async function handleLogin() {
-    const res = await fetch("/api/artists/login", {
+    const res = await fetch(`${API_BASE_URL}/api/artists/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
