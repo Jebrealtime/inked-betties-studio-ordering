@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Page, Layout, Card, Text, Button } from "@shopify/polaris";
+import { API_BASE_URL } from "../api";
 
 export default function ArtistOrder() {
   const [restricted, setRestricted] = useState([]);
 
   useEffect(() => {
     async function loadRestricted() {
-      const res = await fetch("/api/settings/restricted");
+      const res = await fetch(`${API_BASE_URL}/api/settings/restricted`);
       const data = await res.json();
       setRestricted(data);
     }

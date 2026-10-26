@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Page, Layout, Card, Text, Button } from "@shopify/polaris";
+import { API_BASE_URL } from "../api";
 
 export default function ArtistDashboard({ setActivePage }) {
 
@@ -9,7 +10,7 @@ export default function ArtistDashboard({ setActivePage }) {
 
     if (!artistId) return;
 
-    fetch(`/api/artists/${artistId}`)
+    fetch(`${API_BASE_URL}/api/artists/${artistId}`)
       .then(res => res.json())
       .then(data => {
         if (data.role === "solo") {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Page, Layout, Card, Text, Checkbox } from "@shopify/polaris";
+import { API_BASE_URL } from "../api";
 
 export default function ArtistChecklist() {
   const [items, setItems] = useState([]);
@@ -15,7 +16,7 @@ export default function ArtistChecklist() {
       setArtist(user);
 
       // ⭐ 2. Load studio-wide checklist
-      const res = await fetch("/api/settings");
+      const res = await fetch(`${API_BASE_URL}/api/settings`);
       const data = await res.json();
       const checklist = Array.isArray(data.checklist) ? data.checklist : [];
       setItems(checklist);
@@ -24,7 +25,7 @@ export default function ArtistChecklist() {
       const today = new Date().toISOString().split("T")[0];
 
       if (user.lastChecklistReset !== today) {
-        await fetch(`/api/artists/${user._id}/reset-checklist`, {
+        await fetch(`${API_BASE_URL}/api/artists/${user._id}/reset-checklist`, {
           method: "POST"
         });
 
@@ -34,7 +35,7 @@ export default function ArtistChecklist() {
       }
 
       // ⭐ 4. Load artist progress
-      const artistRes = await fetch(`/api/artists/${user._id}`);
+      const artistRes = await fetch(`${API_BASE_URL}/api/artists/${user._id}`);
       const artistData = await artistRes.json();
 
       const progress = artistData.checklistProgress || {};
@@ -62,7 +63,7 @@ export default function ArtistChecklist() {
     });
 
     // ⭐ Save progress + notify owner
-    await fetch(`/api/artists/${artist._id}/checklist`, {
+    await fetch(`${API_BASE_URL}/api/artists/${artist._id}/checklist`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
